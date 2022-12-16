@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .column{
+            display: flex;
+            flex-direction: column;
+            height: 30vh;
+            width: 70vw;
+            align-items: center;
+            align-content: center;
+            background-color: lightgray;
+            justify-content: space-evenly;
+            border-radius: 25px;
+        }
+        .row{
+            display: flex;
+            flex-direction: row;
+            height: 100px;
+            width: 70vw;
+            align-items: center;
+            align-content: center;
+            justify-content: space-evenly;
+        }
+        button{
+            width: 70%;
+            height:50px ;
+            border-radius: 15px;
+            border: none;
+        }
+
+        input{
+            height:75px ;
+            width: 75px;
+            text-align: center;
+            font-size: xx-large;
+            border-radius: 15px;
+            border: none;
+        }
+        #show{
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <center>
+        <div class="column">
+            <div class="row">
+                <input type="number"  min="0" id ="hour" placeholder="H">
+        
+                <input type="number"  min="0" id ="minute" placeholder="M">
+            
+                <input type="number"  min="0" id ="second" placeholder="S">
+            </div>
+            <button id="start">START COUNTDOWN</button>
+        </div>
+        <br>
+        <div class="column" id="show" >       
+            <div class="row">
+                <input id ="hourout" placeholder="00" disabled>
+        
+                <input id ="minuteout" placeholder="00" disabled>
+            
+                <input id ="secondout" placeholder="00" disabled>
+            </div>
+        </div>
+    </center>
+
+    <script type="text/javascript" src="https://unpkg.com/rxjs@^7/dist/bundles/rxjs.umd.min.js"></script>
+    <script> 
+        const {fromEvent, interval, takeWhile} = rxjs;  
+
+        const startBtn = document.getElementById('start');
+        const startListen = fromEvent(startBtn, 'click');
+
+        startListen.subscribe(() => {    
+
+        const hours = document.getElementById("hour").valueAsNumber || 0; //get all the values for timer  
+        const minutes = document.getElementById("minute").valueAsNumber || 0;
+        const seconds =  document.getElementById("second").valueAsNumber || 0;
+        const total = hours * 60 * 60 + minutes * 60 + seconds;  //get total in seconds
+
+        const timer = interval(1000).pipe(takeWhile((time) => time <= total));   //interval of 1000 milliseconds 
+    
+        timer.subscribe((time) => { //convert seconds to hr, min, sec
+            document.getElementById("show").style.display = "flex"; //display timer display section
+            document.getElementById("hourout").value = Math.floor((total - time) / 3600);
+            document.getElementById("minuteout").value = Math.floor((total - time) / 60) % 60;
+            document.getElementById("secondout").value = (total - time) % 60;
+        });
+
+    });
+    </script>
+</body>
+</html>
