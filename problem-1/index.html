@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<body style="background-color: black;">
+    <center>
+        <div style="height: 80vh; width:80vw; background-color:rgb(207, 97, 77); border-radius:50px;">
+            <br>
+            <center>
+                <h1 style="font-family:fantasy ; font-size:xxx-large;">
+                    Notes App
+                </h1>
+            </center>
+            <div class="addEntry ">
+        
+                <center>
+                    <form  method="post" id="notesForm">
+                        <input style="width:300px; border-radius:5px; border:none; padding:10px;" type="text" required minlength="3" maxlength="20" name="name" id="name" placeholder="Note Name">
+                        <br>
+                        <br>
+                        <textarea style="width:300px; border-radius:5px; border:none; padding:10px;" type="text" required minlength="3" name="description" id="description" placeholder="Description"> </textarea>
+                        <br>
+                        <br>
+                        <input style="width:300px; border-radius:5px; border:none; padding:10px;"  type="submit"  name="submit" id="submit" value="Add Note">
+                    </form>
+                </center>
+            </div>
+            <br>
+            <div class="container">
+                <div class="showEntry">
+                    <center>
+                        <table class="table" id="table" style=" background-color: rgb(255, 255, 255); width:300px; border-radius:5px; border:none; padding:10px;">
+                            <thead>
+                                <tr>
+                                    <th>Note Name</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody id="notes">
+                            </tbody>
+                        </table>
+                    </center>
+                </div>
+            </div>
+        </div>
+    </center>
+
+<script type="text/javascript" src="https://unpkg.com/rxjs@^7/dist/bundles/rxjs.umd.min.js"></script>
+<script >
+
+    const {fromEvent, interval, takeWhile} = rxjs; 
+    const notesForm = document.querySelector("#notesForm");
+    const notes = document.querySelector("#notes");
+    const deleteListen = fromEvent(notes, 'click');
+    const submitListen = fromEvent(notesForm, 'submit');
+
+    if (notesForm != null) {
+        submitListen.subscribe(function (e) { //create note function
+            e.preventDefault();
+            var name = document.querySelector("#name");
+            var description = document.querySelector("#description");
+
+            if ((name.value && description.value) != "") { //if note isin't empty
+                const TDname = document.createElement('td'); //create all the elements
+                const TDdesc = document.createElement('td');
+                const TDdel = document.createElement('td');
+                const tr = document.createElement('tr');
+
+                TDname.textContent = name.value; //define each element
+                TDdesc.textContent = description.value;
+                TDdel.textContent = "DELETE";
+                TDdel.style.color = "red";
+                TDdel.style.fontFamily = "fantasy";
+                TDdel.classList.add('delete');
+
+                tr.appendChild(TDname); //add elements to table row
+                tr.appendChild(TDdesc);
+                tr.appendChild(TDdel);
+                notes.appendChild(tr); //add to table
+
+                name.value = ""; //clear values
+                description.value = "";
+            }
+
+        });
+    }
+
+    if (notes != null) {
+        deleteListen.subscribe(function (e) { //delete note function
+            if (e.target.className == "delete") {
+                const el = e.target.parentElement;
+                el.parentElement.removeChild(el); //delete row from table
+            }
+        });
+    }
+</script>
+</body>
+</html>
